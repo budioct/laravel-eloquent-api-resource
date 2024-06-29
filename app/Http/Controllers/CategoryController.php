@@ -19,4 +19,13 @@ class CategoryController extends Controller
 
     }
 
+    public function getListCategories(){
+
+        // sql: select * from `categories`
+        $categories = Category::all(); // all() // Dapatkan semua model dari database.
+
+        return CategoryResource::collection($categories); // collection() // juga bisa parsing data ke resource (DTO) yang akan di transform bentuk Array atau JSON
+
+    }
+
 }
