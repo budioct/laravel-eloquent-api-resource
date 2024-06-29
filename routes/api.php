@@ -20,3 +20,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::get("/category/{id}", [\App\Http\Controllers\CategoryController::class, 'getDetailCategory']);
 Route::get("/categories", [\App\Http\Controllers\CategoryController::class, "getListCategories"]);
+Route::get("/categories-custom", [\App\Http\Controllers\CategoryController::class, "getListCategoriesCustom"]);
