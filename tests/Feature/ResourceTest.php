@@ -374,4 +374,37 @@ class ResourceTest extends TestCase
 
     }
 
+
+
+
+    /**
+     * Data Wrap Collection
+     * ● Khusus untuk mengubah attribute $wrap untuk Collection, kita tidak bisa menggunakan
+     *   NamaResource::collection(), hal ini karena kode tersebut sebenarnya akan membuat object
+     *   AnonymousResourceCollection, bukan menggunakan Resource yang kita buat
+     * ● https://laravel.com/api/10.x/Illuminate/Http/Resources/Json/AnonymousResourceCollection.html
+     * ● Jika hasil result JSON di ResourceCollection.toArray() mengandung attribute yang terdapat di
+     *   $wrap, maka Laravel tidak akan melakukan wrap, namun jika tidak ada, maka akan melakukan wrap
+     */
+
+    public function testResourceCollectionProductWrap()
+    {
+
+        $this->seed([
+            CategorySeeder::class,
+            ProductSeeder::class
+        ]);
+
+        $response = $this->get('/api/products')
+            ->assertStatus(200);
+
+        Log::info(json_encode($response, JSON_PRETTY_PRINT));
+
+        /**
+         * result:
+         * endpoint: /api/products
+         */
+
+    }
+
 }
