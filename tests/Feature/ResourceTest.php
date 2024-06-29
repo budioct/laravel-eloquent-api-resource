@@ -437,7 +437,7 @@ class ResourceTest extends TestCase
 
         /**
          * result:
-         * endpoint: /api/products-paging
+         * endpoint: /api/products-paging atau http://localhost:8000/api/products-paging?page=1
          *
          * {
          * "baseResponse": {
@@ -482,6 +482,71 @@ class ResourceTest extends TestCase
          * }
          */
 
+    }
+
+
+
+
+    /**
+     * Additional Metadata
+     * ● Kadang, kita ingin menambahkan attribute tambahan selain “data”
+     * ● Untuk attribute tambahan yang statis, kita bisa tambahkan di Resource dengan meng-override properties $additional
+     *
+     * Additional Parameter Dinamis
+     * ● Jika kita butuh tambahan additional parameter yang dinamis, kita bisa langsung saja buat di dalam toArray()
+     * ● Yang penting adalah ada attribute yang sama dengan $wrap
+     */
+
+    public function testResourceAdditionalMetadata()
+    {
+        $this->seed([CategorySeeder::class, ProductSeeder::class]);
+
+        // sql: select * from `products` where `products`.`id` = ? limit 1
+        $product = Product::first();
+
+        $response = $this->get('/api/products-debug/' . $product->id)
+            ->assertStatus(200)
+            ->assertJson([
+                "author" => "budhi oct",
+                "organization" => "Anak Om Mamat",
+                "data" => [
+                    "id" => $product->id,
+                    "name" => $product->name,
+                    "price" => $product->price,
+                ]
+            ]);
+
+        Log::info(json_encode($product, JSON_PRETTY_PRINT));
+        Log::info(json_encode($response, JSON_PRETTY_PRINT));
+
+        /**
+         * result:
+         * // endpoint : http://localhost:8000/api/products-debug/{id}
+         *
+         * // ini yang menggunakan $additional AdditionalMetadata
+         * {
+         *   data: {
+         *       id: 121,
+         *       name: "Product 0 of 67",
+         *       price: 166
+         *   },
+         *   author: "budhi oct",
+         *   organization: "Anak Om Mamat"
+         * }
+         *
+         * // ini yang AdditionalMetadata DINAMIS
+         * {
+         *   author: "budhi oct",
+         *   organization: "Anak Om Mamat",
+         *   data: {
+         *      id: 131,
+         *      name: "Product 0 of 69",
+         *      price: 855
+         *   },
+         *  server_time: "2024-06-29 15:47:42"
+         * }
+         *
+         */
     }
 
 }
