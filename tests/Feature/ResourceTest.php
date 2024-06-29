@@ -3,7 +3,9 @@
 namespace Tests\Feature;
 
 use App\Models\Category;
+use App\Models\Product;
 use Database\Seeders\CategorySeeder;
+use Database\Seeders\ProductSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Log;
@@ -281,6 +283,92 @@ class ResourceTest extends TestCase
          *         },
          *       ],
          *   total: 2,
+         *  }
+         */
+
+    }
+
+
+
+
+    /**
+     * Data Wrap
+     * ● Secara default, data JSON yang dibuat oleh Resource akan disimpan dalam attribute “data”
+     * ● Jika kita ingin menggantinya, kita bisa ubah attribute $wrap di Resource dengan nama attribute
+     *   yang kita mau
+     * ● Secara default, jika dalam toArray() kita mengembalikan array yang terdapat attribute sama
+     *   dengan $wrap, maka data JSON tidak akan di wrap
+     */
+
+    public function testResourceProductDataWrapCategory()
+    {
+
+        $this->seed([
+            CategorySeeder::class,
+            ProductSeeder::class
+        ]);
+
+        // sql: select * from `products` where `products`.`id` = ? limit 1
+        $product = Product::query()->first(); // first // Dapatkan 1 data acak
+        self::assertNotNull($product);
+
+        $this->get("api/product/$product->id")
+            ->assertStatus(200)
+            ->assertJson([
+                "wrap_custom" => [
+                    "id" => $product->id,
+                    "name" => $product->name,
+                    "category" => [
+                        "id" => $product->category->id,
+                        "name" => $product->category->name,
+                        "description" => $product->category->description,
+                    ],
+                    "price" => $product->price,
+                    "stock" => $product->stock,
+                    "created_at" => $product->created_at->toJSON(),
+                    "updated_at" => $product->updated_at->toJSON(),
+                ]
+            ]);
+
+        Log::info(json_encode($product, JSON_PRETTY_PRINT));
+
+        /**
+         * result:
+         * endpoint: /api/product/{id}
+         *
+         * // versi tampilan log
+         * {
+         *   "id": 21,
+         *   "name": "Product 0 of 47",
+         *   "price": 902,
+         *   "stock": 46,
+         *   "category_id": 47,
+         *   "created_at": "2024-06-29T14:36:47.000000Z",
+         *   "updated_at": "2024-06-29T14:36:47.000000Z",
+         *   "category": {
+         *       "id": 47,
+         *       "name": "Food",
+         *       "description": "Description Food",
+         *       "created_at": "2024-06-29T14:36:47.000000Z",
+         *       "updated_at": "2024-06-29T14:36:47.000000Z"
+         *     }
+         * }
+         *
+         *  // versi tampilan JSON
+         *  {
+         *    wrap_custom: {
+         *                  "id": 1,
+         *                  "name": "Product 0 of 43",
+         *                  "category" : {
+         *                      "id": 43,
+         *                      "name": "Food",
+         *                      "description": "Description Food"
+         *                  }
+         *                  "price": 552,
+         *                  "stock": 56,
+         *                  "created_at": "2024-06-29T14:21:45.000000Z",
+         *                   "updated_at": "2024-06-29T14:21:45.000000Z"
+         *               }
          *  }
          */
 

@@ -8,4 +8,4 @@ describe categories;
 select * from categories;
 
 describe products;
-drop table products;
+select * from products;

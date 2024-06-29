@@ -22,3 +22,4 @@ Route::get("/category/{id}", [\App\Http\Controllers\CategoryController::class, '
 Route::get("/categories", [\App\Http\Controllers\CategoryController::class, "getListCategories"]);
 Route::get("/categories-custom", [\App\Http\Controllers\CategoryController::class, "getListCategoriesCustom"]);
 Route::get("/categories-nested", [\App\Http\Controllers\CategoryController::class, "getListCategoriesNested"]);
+Route::get("/product/{id}", [\App\Http\Controllers\ProductController::class, "getDetailProductWrapCategory"]);
