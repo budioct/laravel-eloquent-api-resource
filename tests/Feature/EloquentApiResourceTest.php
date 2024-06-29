@@ -19,5 +19,15 @@ class EloquentApiResourceTest extends TestCase
      * ● Atau misal menggunakan attribute yang berbeda antara Array / JSON, dan attribute yang terdapat di Model
      * ● Eloquent memiliki fitur bernama API Resource, yang bisa digunakan untuk melakukan
      *   transformasi dari data Model menjadi Array
+     *
+     * Membuat Model
+     * ● Buatlah model Category dan Product, dimana Category memiliki relasi one to many ke Product
+     * // buat model, migration, seed
+     * php artisan make:model Category --migration --seed
+     *
+     * // setup migration Category
+     * php artisan migrate
+     *
+     * // setup model Category
      */
 }
