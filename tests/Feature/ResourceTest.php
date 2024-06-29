@@ -222,4 +222,68 @@ class ResourceTest extends TestCase
 
     }
 
+
+
+
+    /**
+     * Nested Resource
+     * ● Saat kita menggunakan Resource, contoh pada Resource Collection, kita juga bisa menggunakan
+     *   Resource lainnya
+     * ● Secara default, method toArray() akan dikonversi menjadi JSON
+     * ● Namun, kita bisa menggunakan Resource lain jika kita mau
+     */
+
+    public function testResourceCollectionNestedCategories()
+    {
+
+        $this->seed([
+            CategorySeeder::class
+        ]);
+
+        // sql: select * from `categories` where `categories`.`id` = ? limit 1
+        $category = Category::all(); // all() // Dapatkan semua model dari database.
+        self::assertNotNull($category);
+
+        $this->get("api/categories-nested")
+            ->assertStatus(200)
+            ->assertJson([
+//                "total" => 2,
+                "data" => [
+                    [
+                        "id" => $category[0]->id,
+                        "name" => $category[0]->name,
+                        "description" => $category[0]->description,
+                    ],
+                    [
+                        "id" => $category[1]->id,
+                        "name" => $category[1]->name,
+                        "description" => $category[1]->description,
+                    ],
+                ]
+            ]);
+
+        Log::info(json_encode($category, JSON_PRETTY_PRINT));
+
+        /**
+         * result:
+         * endpoint: /api/categories
+         *  {
+         *   data:[
+         *          {
+         *           id: 11,
+         *           name: "Food",
+         *           description: "Description Food",
+         *         },
+         *         {
+         *          id: 12,
+         *          name: "Gadget",
+         *          description: "Description Gadget",
+         *         },
+         *       ],
+         *   total: 2,
+         *  }
+         */
+
+    }
+
 }

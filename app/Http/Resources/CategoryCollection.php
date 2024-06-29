@@ -29,7 +29,8 @@ class CategoryCollection extends ResourceCollection
     public function toArray(Request $request): array
     {
         return [
-            "data" => $this->collection,
+            //"data" => $this->collection,
+            "data" => CategorySimpleResource::collection($this->collection), // impl Nested Resource.. kita ambil dari resource (DTO) lain yang sudah di set bentuk JSON nya
             "total" => count($this->collection),
         ];
     }

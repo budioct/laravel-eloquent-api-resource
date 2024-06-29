@@ -44,4 +44,15 @@ class CategoryController extends Controller
 
     }
 
+    public function getListCategoriesNested(){
+
+        // impl Nested Resource
+
+        // sql: select * from `categories`
+        $categories = Category::all(); // all() // Dapatkan semua model dari database.
+
+        return new CategoryCollection($categories); // new CategoryCollection() // instance hasil object di set ke resource (DTO) yang akan di transform bentuk Array atau JSON
+
+    }
+
 }
