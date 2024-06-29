@@ -26,7 +26,18 @@ class ProductController extends Controller
         // sql: select * from `products`
         $products = Product::all(); // all() // Dapatkan semua model dari database.
 
-        return new ProductCollection($products);
+        return new ProductCollection($products); // new CategoryCollection() // instance hasil object di set ke resource (DTO) yang akan di transform bentuk Array atau JSON
+
+    }
+
+    public function getListProductsPaginate(Request $request){
+
+        $page = $request->get("page", 1); // get(key, default) // key get value untuk page yang di input user, jika tidak di input user maka akan set value default 1
+
+        // sql: select * from `products` limit 2 offset 0
+        $products = Product::paginate(perPage: 2, page: $page); // paginate() // membuat offset dan limit untuk pagination
+
+        return new ProductCollection($products); // new CategoryCollection() // instance hasil object di set ke resource (DTO) yang akan di transform bentuk Array atau JSON
 
     }
 

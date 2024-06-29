@@ -407,4 +407,81 @@ class ResourceTest extends TestCase
 
     }
 
+
+
+
+    /**
+     * Pagination
+     * ● Jika kita mengirim data Pagination ke dalam Resource Collection, secara otomatis Laravel akan
+     *   menambahkan informasi link dan juga meta (paging) secara otomatis
+     * ● Attribute links berisi informasi link menuju page sebelum dan setelahnya
+     * ● Attribute meta berisi informasi paging
+     */
+
+    public function testResourceCollectionProductPaging()
+    {
+
+        $this->seed([
+            CategorySeeder::class,
+            ProductSeeder::class
+        ]);
+
+        $response = $this->get('/api/products-paging')
+            ->assertStatus(200);
+
+        self::assertNotNull($response->json("links"));
+        self::assertNotNull($response->json("meta"));
+        self::assertNotNull($response->json("data"));
+
+        Log::info(json_encode($response, JSON_PRETTY_PRINT));
+
+        /**
+         * result:
+         * endpoint: /api/products-paging
+         *
+         * {
+         * "baseResponse": {
+         * "headers": {},
+         * "original": [
+         * {
+         * "id": 121,
+         * "name": "Product 0 of 67",
+         * "price": 166,
+         * "stock": 29,
+         * "category_id": 67,
+         * "created_at": "2024-06-29T15:22:26.000000Z",
+         * "updated_at": "2024-06-29T15:22:26.000000Z",
+         * "category": {
+         * "id": 67,
+         * "name": "Food",
+         * "description": "Description Food",
+         * "created_at": "2024-06-29T15:22:26.000000Z",
+         * "updated_at": "2024-06-29T15:22:26.000000Z"
+         * }
+         * },
+         * {
+         * "id": 122,
+         * "name": "Product 1 of 67",
+         * "price": 770,
+         * "stock": 79,
+         * "category_id": 67,
+         * "created_at": "2024-06-29T15:22:26.000000Z",
+         * "updated_at": "2024-06-29T15:22:26.000000Z",
+         * "category": {
+         * "id": 67,
+         * "name": "Food",
+         * "description": "Description Food",
+         * "created_at": "2024-06-29T15:22:26.000000Z",
+         * "updated_at": "2024-06-29T15:22:26.000000Z"
+         * }
+         * }
+         * ],
+         * "exception": null
+         * },
+         * "exceptions": []
+         * }
+         */
+
+    }
+
 }
