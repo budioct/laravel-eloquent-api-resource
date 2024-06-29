@@ -30,4 +30,8 @@ class EloquentApiResourceTest extends TestCase
      *
      * // setup model Category
      */
+
+    public function testTrue(){
+        self::assertTrue(true);
+    }
 }
