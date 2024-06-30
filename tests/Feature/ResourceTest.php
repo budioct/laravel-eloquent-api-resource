@@ -549,4 +549,100 @@ class ResourceTest extends TestCase
          */
     }
 
+
+
+
+    /**
+     * Conditional Attribute
+     * ● Pada beberapa kasus, ketika kita mengakses relation pada model di Resource, secara otomatis
+     *   Laravel akan melakukan query ke database
+     * ● Kadang hal ini berbahaya kalo ternyata relasinya sangat banyak, sehingga ketika mengubah
+     *   menjadi JSON, akan sangat lambat
+     * ● Kita bisa melakukan pengecekan conditional attribute, bisa kita gunakan untuk pengecekan
+     *   boolean ataupun relasi
+     *
+     * Conditional Method
+     * ● Untuk melakukan pengecekan kondisi, kita bisa gunakan method berikut di Resource
+     * ● when(boolean, value, default)
+     * ● whenHas(attribute, default)
+     * ● whenNotNull(attribute)
+     * ● mergeWhen(boolean, array)
+     * ● whenLoaded(relation)
+     */
+
+    public function testResourceProductDataWrapCategoryConditionalAttribute()
+    {
+
+        $this->seed([
+            CategorySeeder::class,
+            ProductSeeder::class
+        ]);
+
+        // sql: select * from `products` where `products`.`id` = ? limit 1
+        $product = Product::query()->first(); // first // Dapatkan 1 data acak
+        self::assertNotNull($product);
+
+        $this->get("api/product/$product->id")
+            ->assertStatus(200)
+            ->assertJson([
+                "wrap_custom" => [
+                    "id" => $product->id,
+                    "name" => $product->name,
+                    "category" => [
+                        "id" => $product->category->id,
+                        "name" => $product->category->name,
+                        "description" => $product->category->description,
+                    ],
+                    "price" => $product->price,
+                    "stock" => $product->stock,
+                    "created_at" => $product->created_at->toJSON(),
+                    "updated_at" => $product->updated_at->toJSON(),
+                ]
+            ]);
+
+        Log::info(json_encode($product, JSON_PRETTY_PRINT));
+
+        /**
+         * result:
+         * endpoint: /api/product/{id}
+         *
+         * // versi tampilan log
+         * {
+         *   "id": 21,
+         *   "name": "Product 0 of 47",
+         *   "price": 902,
+         *   "stock": 46,
+         *   "category_id": 47,
+         *   "created_at": "2024-06-29T14:36:47.000000Z",
+         *   "updated_at": "2024-06-29T14:36:47.000000Z",
+         *   "category": {
+         *       "id": 47,
+         *       "name": "Food",
+         *       "description": "Description Food",
+         *       "created_at": "2024-06-29T14:36:47.000000Z",
+         *       "updated_at": "2024-06-29T14:36:47.000000Z"
+         *     }
+         * }
+         *
+         *  // versi tampilan JSON
+         *  {
+         *    wrap_custom: {
+         *                  "id": 1,
+         *                  "name": "Product 0 of 43",
+         *                  "category" : {
+         *                      "id": 43,
+         *                      "name": "Food",
+         *                      "description": "Description Food"
+         *                  }
+         *                  "price": 552,
+         *                  "stock": 56,
+         *                  "created_at": "2024-06-29T14:21:45.000000Z",
+         *                   "updated_at": "2024-06-29T14:21:45.000000Z"
+         *               }
+         *  }
+         */
+
+    }
+
+
 }

@@ -17,6 +17,10 @@ class ProductController extends Controller
         // sql: select * from `products` where `products`.`id` = ? limit 1
         $products = Product::query()->findOrFail($id); // find() & findOrFail() // find data berdasarkan id
 
+        // jika kita tidak load relasinya maka di ProductResource key "category" tidak akan di tampilkan, karena sudah add Conditional Method whenLoaded().. "category" => new CategorySimpleResource($this->whenLoaded("category"))
+        // sql: select * from `categories` where `categories`.`id` in (71)
+        $products->load("category"); // load("attribute_name_method") Eager load relations on the model. // untuk mengambil data relasi model product many to one model cateogry
+
         return new ProductResource($products); // new ProductResource() // instance hasil object di set ke resource (DTO) yang akan di transform bentuk Array atau JSON
     }
 
@@ -25,7 +29,8 @@ class ProductController extends Controller
         // impl Data Wrap Collection
 
         // sql: select * from `products`
-        $products = Product::all(); // all() // Dapatkan semua model dari database.
+        //$products = Product::all(); // all() // Dapatkan semua model dari database.
+        $products = Product::query()->with("category")->get(); // with("attribute_name_method") Set the relationships that should be eager loaded. // untuk mengambil data relasi model product many to one model cateogry.. // get() // eksekusi query builder
 
         return new ProductCollection($products); // new CategoryCollection() // instance hasil object di set ke resource (DTO) yang akan di transform bentuk Array atau JSON
 
