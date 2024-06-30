@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
@@ -22,6 +23,11 @@ class ProductCollection extends ResourceCollection
      *  ● https://laravel.com/api/10.x/Illuminate/Http/Resources/Json/AnonymousResourceCollection.html
      *  ● Jika hasil result JSON di ResourceCollection.toArray() mengandung attribute yang terdapat di
      *    $wrap, maka Laravel tidak akan melakukan wrap, namun jika tidak ada, maka akan melakukan wrap
+     *
+     * Resource Response
+     *  ● Di method toArray() terdapat parameter Request, yang artinya kita bisa mengambil informasi pada
+     *    HTTP Request jika dibutuhkan
+     *  ● Resource juga memiliki method withResponse() yang bisa kita override untuk mengubah Http Response
      */
 
     // jadi cara kerja attribute $wrap untuk merubah super wrap di laravel default adalah "data"
@@ -36,5 +42,11 @@ class ProductCollection extends ResourceCollection
         return [
             "data" => ProductResource::collection($this->collection)
         ];
+    }
+
+    // kita untuk mengubah Http Response untuk client
+    public function withResponse(Request $request, JsonResponse $response)
+    {
+        $response->header("X-Power-By", "Anak Om Mamat");
     }
 }

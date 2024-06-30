@@ -21,7 +21,12 @@ class ProductController extends Controller
         // sql: select * from `categories` where `categories`.`id` in (71)
         $products->load("category"); // load("attribute_name_method") Eager load relations on the model. // untuk mengambil data relasi model product many to one model cateogry
 
-        return new ProductResource($products); // new ProductResource() // instance hasil object di set ke resource (DTO) yang akan di transform bentuk Array atau JSON
+        //return new ProductResource($products); // new ProductResource() // instance hasil object di set ke resource (DTO) yang akan di transform bentuk Array atau JSON
+
+        // kita bisa mengambil informasi pada HTTP Request jika dibutuhkan, yang bisa kita override untuk mengubah Http Response
+        return (new ProductResource($products))
+            ->response()
+            ->header("X-Power-By", "Anak Om Mamat"); // header() // kita untuk mengubah Http Response untuk client
     }
 
     public function getListproductsCustom(){
